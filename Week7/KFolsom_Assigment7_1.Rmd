@@ -1,0 +1,118 @@
+---
+title: 'DATA 604: Week 7 Assignment'
+author: "Keith Folsom"
+date: "October 14, 2017"
+output: 
+  html_document: 
+    fig_height: 4
+    fig_width: 5
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+set.seed(123)
+
+```
+__From Simio and Simulation: Modeling, Analysis, Applications__  
+
+### __Chapter 5 Problem # 6__
+
+##### In Model 5-2, we assumed that the inspection workers did not overlap between shifts (i.e., there were never two inspectors working at the same time).  Modify the model so that the inspectors do overlap for the first hour of one shift and the last hour of the other shift.  Compare the results of the two models.  Does having the inspectors overlap help?
+
+Modify the work schedule to create two intervals for the two overlapping hours during the inspection shifts as shown below.  The value for the overlapping periods should be 2.
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_6_A.PNG)
+
+
+####Results:
+
+#####Original Model:
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_6_Original_Results1.PNG)
+
+---
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_6_Original_Results2.PNG)
+
+
+
+#####Overlapping Inspection Workers:
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_6_Overlap_Results1.PNG)
+
+---
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_6_Overlap_Results2.PNG)
+
+
+#### Outcome  
+
+Comparing the original and modified models, the change to have inspectors overlap for 2 hours out of the 24 hour shift did have some impact on metrics such as TIS (TimeInSystem) and WIP (NumberInSystem).  We do see a small drop in TimeInSystem from an average of 503 to 496 minutes.  WIP also dropped from 83.8 to 82.7 (average). NumTimesProcessed did not change; however, you would not expect this tally metric to change necessarily with more inspector coverage.
+
+We see a decrease in percent value of the Inspection Scheduled Utilization and Average Processing Time, which is likely contributing to the small decrease in TIS and WIP.  So, yes, we do see some improvement with adding overlap to the work schedule.
+
+
+### __Chapter 5 Problem # 7__
+
+##### In the description of Model 5-2, we noted that there is no limit on the number of times that a board may be found in need of rework.  Modify Model 5-2 so that if a board fails the inspection more than two times, it is rejected as a bad part.
+
+For this problem, I assumed the number of times a board can be processed are as described in the book on page 157:
+
+1. Any board processed a 3rd time is rejected  
+2. 95% of inspected boards are good  
+3. 5% of inspected boards are bad  
+
+
+To change the model to account for the rejection on its third processing, move the State Assignment to the Inspection server node and remove it from Placement node.  
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_7_1.PNG)
+
+
+#### Running the second model using the new logic, NumberEntered for Bad Parts = 51.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_7_2.PNG)
+
+
+
+### __Chapter 5 Problem # 8__
+
+##### In the description of Model 5-3, we indicated that as part of our model verification, we had predicated the proportions of parts that would go to the fast, medium, and slow fine-pitch placement machines (38%, 33%, and 29%, respectively).  Develop a queueing model to estimate these proportions.
+
+For this problem, I reduced the model to a source and the 3 server machines with the capacities previously specified in Model 5-3.  
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_8_1.PNG)
+
+#### Results 
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_8_2.PNG)
+
+### __Chapter 5 Problem # 9__  
+
+#####Develop a Simio model of the pharmacy described in the book.  Consider a pharmacy where customers come to presciptions filled.  Customers can either have their doctor fac prescriptions ahead of time and come at a later time to pick up their prescriptions or they can walk in with the prescriptions and wait for them to be filled.
+
+
+For this problem, I ran into a challenge trying to select the appropriate rate table based on the customer type (CustFaxIn or CustWalkIn).  I got fairly far down the path of setting the supporting tables up but could not get the rate table pulled into the model in a table-driven way.
+
+Model Setup:
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_9.PNG)
+
+---
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_9_A.PNG)
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_9_B.PNG)
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_9_C.PNG)
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week7/5_9_C.PNG)
+
+
+
+
+

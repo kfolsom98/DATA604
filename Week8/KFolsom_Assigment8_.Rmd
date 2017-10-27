@@ -1,0 +1,302 @@
+---
+title: 'DATA 604: Week 8 Assignment'
+author: "Keith Folsom"
+date: "October 21, 2017"
+output: 
+  html_document: 
+    fig_height: 4
+    fig_width: 5
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+set.seed(123)
+library(tidyverse)
+library(data.table)
+
+```
+__From Simio and Simulation: Modeling, Analysis, Applications__  
+
+
+### __Chapter 6 Problem # 1__
+
+##### The Excel file _Problem_Dataset_06_01.xls_ contains 42 observations on interarrival times (in minutes) to a call center.  Use Stat::Fit to fit one or more probability distributions to these data, including goodness-of-fit testing and probability plots.  What's your recommendation for a distribution to be used in the simulation model?  Provice the correct Simio expression.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.1A.PNG)
+
+
+Looking at the results of Stats::Fit, an Exponential or Lognormal distribution could be appropriate for these data based on the "eyeball test" and the output of the goodness-of-fit tests.  
+
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.1B.PNG)
+
+---
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.1C.PNG)
+
+---
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.1D.PNG)
+
+--- 
+
+The Exponential distribution would be the first one to try for modeling interarrival times in Simio.  The expression would be:
+
+    2.+Random.Exponential(9.92)
+    
+
+(Lognormal:  2.+Random.Lognormal(1.72, 1.28))
+
+
+### __Chapter 6 Problem # 2__
+
+##### The Excel file _Problem_Dataset_06_02.xls_ contains 47 observations on call duration times (in minutes) to a call center.  Use Stat::Fit to fit one or more probability distributions to these data, including goodness-of-fit testing and probability plots.  What's your recommendation for a distribution to be used in the simulation model?  Provice the correct Simio expression.
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.2A.PNG)
+
+
+Looking at the results of Stats::Fit, an Exponential or Lognormal distribution could be appropriate for these data based on the "eyeball test" and the output of the goodness-of-fit tests. Based on the p-value from the goodness-of-fit tests, I would recommend the lognomral distribution.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.2B.PNG)
+
+---
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.2C.PNG)
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.2D.PNG)
+
+--- 
+
+For importing the Lognormal distribution into Simio for modeling call duration, the expression would be:
+
+    2.76+Random.Lognormal(1.84, 0.717)
+
+
+### __Chapter 6 Problem # 3__
+
+##### The Excel file _Problem_Dataset_06_03.xls_ contains 45 observations on the number of extra tech-support people need to resolve the problems on a call to the call center in Problem 1 and 2.  Use Stat::Fit to fit one or more probability distributions to these data, including goodness-of-fit testing and probability plots.  What's your recommendation for a distribution to be used in the simulation model?  Provice the correct Simio expression.
+
+For this problem, the data were modeled as a discrete distribution with Binomial and Poisson distributions looking to be appropriate.  
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.3A.PNG)
+
+
+Of these, the Binomial distribution has a slightly higher goodness-of-fit p-value.  The P-P Plot in this case is too close to differentiate between the two.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week8/6.5.3B.PNG)
+
+
+--- 
+
+For importing the Binomial distribution into Simio for modeling call center support staff needed, the expression would be:
+
+    Random.Binomial(0.185, 16.)
+
+
+### __Chapter 6 Problem # 4__
+
+##### Derive the inverse-CDF formula for generating random variates from a continuous uniform distribution between real numbers a and b (a < b)
+
+The CDF for a continuous uniform distribution between real numbers a and b is given by:
+
+$$ F(x) = \begin{cases} 
+                0, x \lt a  \\
+               \frac{x - a}{b - a} ,  a \le x \le b   \\     
+               1,     x \gt b \end{cases} $$   
+
+Using the inverse transform method, 
+
+$$ F(X) = (X - a)/(b - a) = R $$
+
+or $$ R = (X - a)/(b - a) $$
+
+Solving for X:
+
+
+$ R(b - a) = X - a $
+
+$ a + (b - a)R = X $ or
+
+$$ X = a + (b - a)R $$
+
+### __Chapter 6 Problem # 5__  
+
+##### Derive the inverse-CDF formula for generating random variates from a Weibull distribution.  
+
+The Weibull distribution a model for time failure for machines or electronic components.
+
+$$ f(x) = \begin{cases} 
+                \frac{\beta}{\sigma^\beta}x^{\beta-1}e^{-(x/\sigma)^\beta}, x \ge 0  \\
+               \frac{x - a}{b - a} ,  a \le x \le b   \\     
+               0,     otherwise \end{cases} $$   
+
+
+To generate a Weibull variate:  
+
+__Determine the CDF which is given by:__
+
+$$ F(X) = 1 - e^{-(x/\sigma)^\beta} \space\space   where  \space \space  x \ge 0  $$
+
+
+Set $F(X) = 1 - e^{-(X/\sigma)^\beta} = R $ 
+
+or 
+
+$$ R = 1 - e^{-(X/\sigma)^\beta} $$
+
+$$ e^{-(X/\sigma)^\beta} = 1 - R $$
+
+$$ -(X/\sigma)^\beta = ln(1 - R) $$
+$$ (X/\sigma)^\beta = -ln(1 - R) $$
+$$ (X)^\beta = \sigma[-ln(1 - R)] $$
+Giving us X in terms of R:
+
+$$ X = \sigma[-ln(1 - R)]^{1\beta} $$
+
+
+
+
+### __Chapter 6 Problem # 8__  
+
+##### Redo the produce-stand spreadsheet simulation (Problem 17 from Chapter 3), but now use more precise probability mass functions for the daily demand; Walther has taken good data over the recent years on this, and he also now allows customers to buy only certain pre-packaged weights.
+
+
+##### Set up the weights, probability, and cumulative probability per crop
+
+```{r}
+
+# oats
+oats <- data.frame(type = 'oats',
+                   qty=c(0, 0.5, 1.0, 1.5, 2.0, 3, 4, 5, 7.5, 10),
+                   prob=c(0.05, 0.07, 0.09, 0.11, 0.15, 0.25, 0.1, 0.09, 0.06, 0.03))
+                   
+oats$cumulative_prob <- cumsum(oats$prob)
+
+# peas
+peas <- data.frame(type = 'peas',
+                  qty = c(0,0.5,1,1.5,2,3),
+                  prob= c(0.1,0.2,0.2,0.3,0.1,0.1))
+
+peas$cumulative_prob <- cumsum(peas$prob)
+
+# beans
+beans <- data.frame(type = 'beans',
+                    qty= c(0,1,3,4.5),
+                    prob = c(0.2,0.4,0.3,0.1))
+                    
+beans$cumulative_prob <- cumsum(beans$prob)
+
+# barley
+
+barley  <- data.frame(type = 'barley',
+                      qty=c(0,0.5,1,3.5),
+                      prob = c(0.2,0.4,0.3,0.1))
+                      
+
+barley$cumulative_prob <- cumsum(barley$prob)                    
+
+# Combine them all into single data frame
+crop_prob_table <- rbind(oats, peas, beans, barley)
+crop_prob_table$type <- as.character(crop_prob_table$type)
+
+
+# create the crop reference data for acquisition cose and sale price for each crop
+crop_data <- 
+  data.frame(
+     crop = c("oats", "peas", "beans", "barley"),
+     wac = c(1.05, 3.17, 1.99, 0.95),     # acquisition cost
+     sell = c(1.29, 3.76, 2.23, 1.65),    # selling price
+     crop_demand = 0,                     # simulated daily demand for the given crop; uniform distribution
+     cost = 0,                            # crop simulated cost (wac * simulated demand) 
+     revenue = 0,                         # crop simulated revenue value (selling price * simulated demand)  
+     profit = 0,                          # crop simulated profit value (selling price * simulated demand)
+     stringsAsFactors = F) 
+     
+
+
+## Function to simulate a crop season
+sim_crop_season <- function(run_num, days) {
+  
+  # replicate each crop entry by the number of days in the season to simulate
+  crop__sim <- as.data.frame(lapply(crop_data, rep, days))
+  
+  # set the iteration number
+  crop__sim$run_num <- run_num 
+  
+  crop__sim$crop <- as.character(crop__sim$crop)  # convert from factor to character
+  
+  # daily daily demain as a uniform random number
+  crop__sim$daily_demand <- replicate(nrow(crop__sim), runif(1)) 
+  
+  # set the day number
+  crop__sim$day <- ceiling(seq(1:nrow(crop__sim))/4)
+
+  for (i in 1:nrow(crop__sim)) {
+    
+    crop__sim$crop_demand[i] <-subset(crop_prob_table, type == crop__sim$crop[i] & 
+                                      cumulative_prob >= crop__sim$daily_demand[i], 
+                                     select=qty)[1,1]
+    
+    crop__sim$cost[i] <- crop__sim$crop_demand[i] * crop__sim$wac[i]
+    crop__sim$revenue[i] <- crop__sim$crop_demand[i] * crop__sim$sell[i]
+    crop__sim$profit[i] <- crop__sim$revenue[i] - crop__sim$cost[i]
+  }
+ 
+ return (crop__sim)
+}
+
+# calcualte for one season
+sim1 <- sim_crop_season(1, 90)
+
+```
+
+```{r, echo=F}
+head(sim1) %>% knitr:::kable() 
+
+```
+
+
+#### Run 30 iterations 
+
+```{r}
+
+sim <-  rbindlist(lapply(1:30, function(x) sim_crop_season(x, 90))) %>% as.data.frame()
+
+
+sim %>% 
+  group_by(run_num) %>% summarise(mean_profit = sum(profit)/90,
+                                  mean_cost =  sum(cost)/90,
+                                  mean_revenue = sum(revenue)/90)  -> agg
+```
+
+#### Results
+
+__Walther doesn't appear to be making much money with this approach__
+
+```{r, echo=FALSE}
+knitr::kable(agg)
+
+```
+
+```{r}
+
+# Run t-tests on the mean values:
+
+t.test(agg$mean_profit)
+
+
+t.test(agg$mean_cost)
+
+
+t.test(agg$mean_revenue)
+
+```
+
+
+
+

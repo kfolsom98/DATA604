@@ -1,0 +1,112 @@
+---
+title: 'DATA 604: Week 9 Assignment'
+author: "Keith Folsom"
+date: "October 29, 2017"
+output: 
+  html_document: 
+    fig_height: 4
+    fig_width: 5
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+__From Simio and Simulation: Modeling, Analysis, Applications__  
+
+
+### __Chapter 7 Problem # 7__
+
+##### Of great concern to emergency staff are thos patients who on arrival are classified Severe but whose condition before recieving treatment deteriorates to Urgent, requiring immediate attention and stabilization in the Trauma Rooms.  If such deterioration is noticed during the examination stage in 10% of the Severe patients, adjust Model 7-2 to reflect this and compare the impact on waiting times and throughput.  What assumptions have you made about "immediate attention?".
+
+
+#### Model Setup
+
+To support this change, I created a fifth type of model entity called "Severe_Urgent" to represent the 10% of Severe patients who deteriorate to Urgent.
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week9/7.9.7A.PNG)
+
+
+Update the Patient Data data table to include the fifth patient type, reflecting the change in Patient Mix. Patient Mix for Severe is now 21.6 and Severe_Urgent is 2.4 representing the 10% of Severe patients who deteriorate to Urgent.  Also, note that the priority is escalated to 4 for these patients.  Arguably, the priority could be made the same as the default priority of an Urgent patient.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week9/7.9.7B.PNG)
+
+--- 
+
+Create the sequence for the Severe_Urgent patient to:
+
+* SignIn
+* Registration  
+* ExamRoom
+* TraumaRoom
+* TreatmentRoom
+* TraumaExit
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week9/7.9.7C.PNG)
+
+---
+
+##### Simio Model - Facility View  
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week9/7.9.7D.PNG)  
+
+
+
+
+#### Results
+
+* Model A represents the original Model 7-2 
+* Model B represents the modified model to handle 10% patient deterioration from Severe to Urgent  
+
+
+
+Model |  Patient Entity |   Number In System (avg) | Time In System (avg) Hours   
+-------|---------|--------------------|---------------------------|
+A      | Routine | 1.8712    |  0.3119
+B      | Routine | 1.8678    |  0.3112    
+A      | Moderate| 2.3995    |  0.5167
+B      | Moderate| 2.4084    |  0.5182
+A      | Severe |  2.6474 |  0.7358
+B      | Severe |  2.3865 |  0.7367  
+B      | Severe_Urgent |  0.5698  |  1.5848  
+A      | Urgent |  0.9590  |  1.2768
+B      | Urgent |  0.9641  |  1.2833  
+A      | NormalExit|     |  0.4858
+B      | NormalExit|     |  0.4797
+A      | TraumaExit|     |  1.2768
+B      | TraumaExit|     |  1.3808
+    
+
+
+
+Model |  Server  |   Utilization %   | Number In Station |  Time In Station (avg) Hours | Number Waiting | Time Waiting 
+-------|---------|------------------|------------------ |------------------------------|----------------|----------------  
+A      | SignIn | 42.0996    | 0.4210 |  0.0281 |   |     
+B      | SignIn | 42.1202    |    0.4212 |  0.0281 |   |      
+A      | Registration| 33.5656    | 1.0070 | 0.0707   |   |   
+B      | Registration| 33.5825      | 1.0075 |  0.0707  |   |     
+A      | ExamRooms| 56.0022    | 3.3601 |  0.2359 |   |   
+B      | ExamRooms| 55.5318    | 3.3319 | 0.2339   |   |   
+A      | TraumaRooms| 15.6499    | 0.3130 |  0.4167   |   |   
+B      | TraumaRooms| 23.1401     | 0.4628 |  0.4166  |   |   
+A      | TreatmentRooms| 40.3139    | 2.4188 |  0.2690  | 0.0183 | 0.0020
+B      | TreatmentRooms| 43.3168    | 2.5990 |   0.2889  | 0.0307 | 0.0034
+
+
+#### Conclusions  
+
+We see a slight increase in Model B with the overall Time In System related to a TraumaExit. This represents a TimeInSystem increase of 8% for patients determined to be Severe/Urgent or Urgent.  This result is intuitively consistent with the creation of the additional logic to route Severe patients from the Exam Rooms to the Trauma Rooms.
+
+From a station perspective, we see a corresponding increase in Trauma Room utilization, up from 15.6% to 23.1% in Model A to Model B, respectively. Again, consistent with the intent to move deteriorating Severe patients to the Trauma care path.  Number In Station also increases from 0.31 to 0.46 with the Severe/Urgent patient logic in Model B.  Interestingly, Time In Station is consistent between both models.
+
+The Severe/Urgent patient logic also impacts the Treatment Rooms.  Utilization increases from 40.3% to 43.3%.  Previous metrics from Number Waiting and Time Waiting also increase from 0.0183 and 0.0020 hours (avg) to 0.0307 and 0.0034 hours (avg).
+
+
+##### Assumptions
+
+* A Severe patient deteriorating to an Urgent patient is assigned a priority 4 while an Urgent patient is assigned priority 5.  Adjusting priority for this patient type could be a opportunity for further testing for impact on the results.
+* The service times for a Severe/Urgent patient are the same as the service times for other patients in the Exam, Trauma, and Treatment Rooms.  

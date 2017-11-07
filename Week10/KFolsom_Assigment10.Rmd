@@ -1,0 +1,147 @@
+---
+title: 'DATA 604: Week 10 Assignment'
+author: "Keith Folsom"
+date: "November 5, 2017"
+output: 
+  html_document: 
+    fig_height: 4
+    fig_width: 5
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+__From Simio and Simulation: Modeling, Analysis, Applications__  
+
+
+### __Chapter 8 Problem # 8.4.5__
+
+##### Speedee Car Rentals is open 24 hours and has two classes of customers - 25% are premium customers who are promised a waiting time of less than 5 minutes from when they enter or they will receive a $15 discount on their rental. The others are regular customers who will wait as long as they have to wait. Customers arrive about 2 minutes apart (exponential) and move about 4 meters at 1 mile per hour to either the premium counter (1 agent) or the regular counter (2 agents). All customers have a uniformly distributed service time of from 2 to 7 minutes. Each agent costs $55 per hour (including overhead) and each customer completed contributes $8 to income (minus any discount they might have received).
+
+##### Model this system without using any links. Run for 10 days per replication. For each scenario, report the utilization of each type of agent and the waiting time of each type of customer. Both on-screen and in the output, report the number of premium customers who received a discount, the total discounts paid, and the net profit (after discounts and costs) of the system.
+
+* _Scenario a)_ Assume that each agent only handles customers of his designated type.
+* _Scenario b)_ Relax the above assumption. Consider alternative work rules (who services which customer under which conditions) for this same staff. Evaluate each proposed scenario to see the impact on the metrics.
+
+* _Scenario c)_ Model other possible solutions to improve the system. You may use links if that helps.
+
+
+#### Scenario a Model Setup
+
+##### Assume that each agent only handles customers of his designated type
+
+
+##### Simio Model - Facility View  
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture1.PNG)
+
+
+__Model Entity:__  
+* PremiumCustomer  
+* RegularCustomer  
+
+Initial Cost set to $-8 to account for $8 in income represented by each customer.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture2.PNG)
+
+
+__Source__
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture3.PNG)
+
+
+__2 Servers:__
+
+* PremiumCounter 
+    - Initial Capacity = 1  
+    - Processing Time = Random.Uniform(2,7)
+    - Parent Cost Center = SpeedeeCostCenter (create as new)  
+    - Idle Cost Rate = $55/hr
+    - Usage Cost Rage = $55/hr
+    - Add-on Process Trigger:  AssessPremiumDiscount  
+    
+* RegularCounter 
+    - Initial Capacity = 2 
+    - Processing Time = Random.Uniform(2,7)
+    - Parent Cost Center = SpeedeeCostCenter  
+    - Idle Cost Rate = $55/hr
+    - Usage Cost Rage = $55/hr
+    - Add-on Process Trigger:  None  
+    
+    
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture4.PNG)
+
+
+
+__1 Sink__
+    
+
+
+__Processess__
+
+Define the Add-On Process for the RegularCounter server to add one to the PremiumCounter state varable if the TimeInSystem exceeds 5 minutes.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture5.PNG)  
+
+
+__Definitions__
+
+__State Variables__  
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture6.PNG)  
+
+--- 
+
+__Output Statistics__  
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture7A.PNG) 
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture7B.PNG) 
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture7C.PNG)   
+
+
+__Data__  
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture8.PNG)   
+
+#### Replication Results: 10 Replications of 10 days  
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioA_Capture9.PNG)   
+
+---  
+
+---  
+
+#### Scenario b Model Setup
+
+##### Relax the above assumption. Consider alternative work rules (who services which customer under which conditions) for this same staff. Evaluate each proposed scenario to see the impact on the metrics.
+
+
+##### Simio Model - Facility View 
+
+For this scenario, I experimented with having a roving worker going between the PremiumCounter and the RegularCounter.  Each counter was set with an initial capacity of 1 and the worker would move to the server according to need.  Results were not better than the model above, and were in fact worse (at the least the way I set it up).  After working through this approach, I adjusted the approach to use a single server with a capacity of 3.  Service rates are the same for both customers and both types of customers proceed to the same server.
+
+
+Results were actually better than the model in Scenario a with only 249 premium discounts given under scenario b as compared to 462 given in scenario a.  
+
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioB_Capture1.PNG)   
+
+
+Consequently, the profit in Scenario b is higher than that in Scenario a.
+
+__Processes__ 
+
+The main difference in Scenario b is that the Customer Priority is used to determine if a premium discount should be assigned in the Add-On Process.  Since there are no longer two servers, the Add-On process is part of the RegularCounter server.  Priority is used to differentiate customers who should receive a premium discount based on wait time.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioB_Capture2.PNG)   
+
+
+#### Replication Results: 10 Replications of 10 days  
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week10/ScenarioB_Capture3.PNG)      
+

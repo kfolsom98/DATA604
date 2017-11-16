@@ -1,0 +1,73 @@
+---
+title: 'DATA 604: Week 10 Assignment'
+author: "Keith Folsom"
+date: "November 5, 2017"
+output: 
+  html_document: 
+    fig_height: 4
+    fig_width: 5
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+__From Simio and Simulation: Modeling, Analysis, Applications__  
+
+
+### __Chapter 9 Problem # 9.5.2__
+
+##### Modify Model 9-1 to support preemption of the Doctor resource for Urgent patients. In particular, if all doctors are busy when an Urgent patient arrives, the Urgent patient should preempt a doctor from one of the other non-Urgent patients. Compare the results of the models. Would you advise that the emergency department make the corresponding change in the real system?
+
+I attempted this problem using two approaches.
+
+### Approach A)
+
+For this approach, I tried to use a seize request on the Doctor resource. The Facility view is shown below.  However, using a state variable to count the number of seizes that occur, I realized that the doctor is either being seized too many times for non-urgent patients or my logic is incorrect (or both).  Shown below, the number of seizes far exceeds the number of Urgent patients.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureA_1.PNG)
+
+---
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureA_2.PNG)
+
+
+To attempt to handle this, I tried updating the condition to require that a seize only occurs when 1.) a patient is Urgent, 2.) there's capacity in the doctor resources, and the Urgent patient has not seen a doctor yet, the UrgentHasDoctor variable.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureA_3.PNG)
+
+##### The resulting OptQuest output using Satisfaction as the response variable seemed mixed in its results.  Overall, I didn't feel confident that this approach was modeled correctly.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureA_4.PNG)
+
+
+
+
+### Approach B)
+
+For this approach, I based on the logic off of two Simbits examples showing interrupts -- InterruptingServerWithMultipleCapacity and InterruptingAcrossMultipleServers.
+
+__Facility View.__
+
+With this approach, the number of doctor seizes seems more reasonable given the number of Urgent patients in the system.  However, I did run into an occasional run-time warning related to destroying entities with seized resources.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureB_1.PNG)
+
+
+With this approach, leverage the existing Before and After Processing Add-Ons on the TraumaRooms.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureB_2.PNG)
+
+The logic is shown below for the TraumaRooms_Processing Process.  I only applied the preemption of the doctor resource at the TraumaRooms, assuming this station was the first station where an Urgent patient would need immediate need from a doctor.
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureB_3.PNG)
+
+
+---
+
+The OptQuest output again shows mixed results for this approach where satisfication is not exceeding th 80% rate. 
+
+![](https://github.com/kfolsom98/DATA604/raw/master/Week11/CaptureB_4.PNG)
+

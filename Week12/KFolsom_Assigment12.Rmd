@@ -1,0 +1,60 @@
+---
+title: 'DATA 604: Week 12 Assignment'
+author: "Keith Folsom"
+date: "November 18, 2017"
+output: 
+  html_document: 
+    fig_height: 4
+    fig_width: 5
+    theme: cerulean
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+```
+__From Simio and Simulation: Modeling, Analysis, Applications__  
+
+
+### __Chapter 10 Problem # 10.7.1__
+
+##### Compare and contrast the three ways of creating model logic.  What determines your choice when creating a specific object?
+
+The three approaches to defining model logic for an object:
+
+#### 1.  Hierarchical Approach
+
+This approach uses a Facility model and is typically used for building up higher level facility components.  This approach can be combined with the use of add-on processes to define custom behavior within facility objects.  This differs from the process model since you're not creating the object definition behavior from scratch.  The object's logic is specified in the Facility window.  Properties can be be defined as needed and selectively hidden from users.  
+
+This hierarchical approach provides a framework for building model logic, unlike the process model approach.  Because of this, this approach is a more intuitive starting point for less experienced users and is more easily supported by the same group.  This approach, through the use of add-on processes, actually creates the processes for users without having to build them from scratch as in the process model approach.
+
+#### 2.  Process Model
+
+Differing from the hierarchal approach in its setup, the process model approach for creating model logic is done completely from scratch using the Definitions and Processes windows.  In other words, the typical default framework provided by Simio using the hierarchical approach is not present (in most cases, but as the book notes the Processor option does provide some of this).  This option in general would require a more advanced understanding of Simio since the modeler would have to be very familiar/comfortable with using this approach.  There's a high degree of flexibility in this approach but it can be more complex without the framework provided by the hierarchical approach.
+
+#### 3.  Sub-classing 
+
+Sub-classing an object definition allows for inheritance of properties, states, events, and other logic from an existing object definition.  The sub-classed object is initialized with the same properties and behavior of the original object.  The sub-classed object will continue to inherit from the original if the original object is updated.  However, with a sub-classed object, you are able to selectively override inherited processing logic and even alter or extend existing behavior.  This approach is typically used when there is an existing object that has behavior that can be modified to suit the needs of the new object.
+
+Like the hierarchical approach, this approach uses the Facility window so it's in some ways an extension and means of customizing the hierarchical approach.  Processes are modified through the Process window since these are inherited from the original object.  So, this approach can be seen almost as a hybrid of the first two approaches outliend above.
+
+This approach also requires more familiarity and experience with Simio.  
+
+
+
+#### What determines your choice when creating a specific object?
+
+Choosing which approach to use depends on your skill level, need for customization, and overall need of what you're simulating.  You may ask several questions to determine the best approach:
+
+__Will the simulation require building up higher level components?__  If so, then the hierarchical approach may be a good choice.
+
+__Will I need a higher level of customization and flexibility in my model logic?  (And am I comfortable building the logic from scratch without the Facility window)?__  If yes, the process model approach should be considered.
+
+__Do I already have an object that is very similar to a new object that I need to create but I need the new object to have different properties or behavior?__  Sub-classing could be a good option.
+
+A final consideration should also be the ongoing use and support of the model.  Is this model to be maintained by you or will others be involved?  If so, the process model option could present some steeper learning curves versus using the hierarchical approach.
+
+
+
+
